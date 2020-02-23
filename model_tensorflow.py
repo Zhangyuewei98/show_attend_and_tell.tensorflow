@@ -5,7 +5,8 @@ import ipdb
 import tensorflow as tf
 import numpy as np
 import pandas as pd
-import cPickle
+#import cPickle
+import pickle
 
 from tensorflow.models.rnn import rnn_cell
 import tensorflow.python.platform
@@ -189,7 +190,7 @@ class Caption_Generator():
 
 
 def preProBuildWordVocab(sentence_iterator, word_count_threshold=30): # borrowed this function from NeuralTalk
-    print 'preprocessing word counts and creating vocab based on word count threshold %d' % (word_count_threshold, )
+    print('preprocessing word counts and creating vocab based on word count threshold %d' % (word_count_threshold, ))
     word_counts = {}
     nsents = 0
     for sent in sentence_iterator:
@@ -197,7 +198,7 @@ def preProBuildWordVocab(sentence_iterator, word_count_threshold=30): # borrowed
       for w in sent.lower().split(' '):
         word_counts[w] = word_counts.get(w, 0) + 1
     vocab = [w for w in word_counts if word_counts[w] >= word_count_threshold]
-    print 'filtered words from %d to %d' % (len(word_counts), len(vocab))
+    print('filtered words from %d to %d' % (len(word_counts), len(vocab)))
 
     ixtoword = {}
     ixtoword[0] = '.'  # period at the end of the sentence. make first dimension be end token
@@ -261,7 +262,7 @@ def train(pretrained_model_path=pretrained_model_path): # 전에 학습하던게
     train_op = tf.train.AdamOptimizer(learning_rate).minimize(loss)
     tf.initialize_all_variables().run()
     if pretrained_model_path is not None:
-        print "Starting with pretrained model"
+        print("Starting with pretrained model")
         saver.restore(sess, pretrained_model_path)
 
     index = list(annotation_data.index)
@@ -295,7 +296,7 @@ def train(pretrained_model_path=pretrained_model_path): # 전에 학습하던게
                 sentence:current_caption_matrix,
                 mask:current_mask_matrix})
 
-            print "Current Cost: ", loss_value
+            print("Current Cost: ", loss_value)
         saver.save(sess, os.path.join(model_path, 'model'), global_step=epoch)
 
 def test(test_feat='./guitar_player.npy', model_path='./model/model-6', maxlen=20):
